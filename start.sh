@@ -9,8 +9,15 @@ for path in "$search_dir"/*
 do
   new_path=${path//[ ]/-}
   mv "$path" "$new_path"
-  printf "Copying $new_path... \n"
-  printf "$(echo -n $(adb push $new_path ./storage/emulated/0/))\n"
+  file_extension=${new_path##*.}
+
+  if [[ $file_extension == 'apk' ]]; then
+    printf "installing $new_path"
+    printf "$(echo -n $(adb install $new_path))\n"
+  else
+    printf "Copying $new_path... \n"
+    printf "$(echo -n $(adb push $new_path ./storage/emulated/0/))\n"
+  fi
 done
 
 printf "$(echo -n $(adb kill-server))\n" 
